@@ -1,3 +1,5 @@
+# course_register
+
 ## 这是什么？
 
 一个给APU学生使用的**在选课期间自动检查**想选的**一门课**是否有空位的程序。如果有空位将会自动选择并提交。目前仅支持在Windows上使用。
@@ -6,8 +8,10 @@
 ## 依赖
 
 + Chrome浏览器
-+ Java运行环境 可在 https://www.java.com/zh_CN/download/ 找到
++ Java运行环境 可在 https://www.java.com/zh_CN/download/ 找到 并确保Java可执行文件所在文件夹的路径已经被加入环境变量的系统变量的PATH中，具体加入方法请自行搜索。
 + Selenium Standalone Server 可在 https://www.seleniumhq.org/download/ 找到 下载链接是"Download version"右侧的版本号。
++ Chrome driver  https://sites.google.com/a/chromium.org/chromedriver/downloads 找到下载链接是 Latest Release:右侧的链接。并确保其可执行文件所在的文件夹的路径已经被加入环境变量的系统变量的PATH中，具体加入方法请自行搜索。
++ 
 
 ## 下载
 
