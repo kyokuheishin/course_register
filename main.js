@@ -1,5 +1,4 @@
 const electron = require('electron');
-const webdriver = require('selenium-webdriver');
 
 const{
     app,
@@ -28,7 +27,7 @@ function createWindow(){
 
     mainWindow.loadURL(`file://${__dirname}/index.html`);
 
-    mainWindow.webContents.openDevTools();
+    // mainWindow.webContents.openDevTools();
 
     // noinspection JSAnnotator
     mainWindow.on('closed',() => {
