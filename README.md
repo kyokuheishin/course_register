@@ -11,7 +11,6 @@
 + Java运行环境 可在 https://www.java.com/zh_CN/download/ 找到 并确保Java可执行文件所在文件夹的路径已经被加入环境变量的系统变量的PATH中，具体加入方法请自行搜索。
 + Selenium Standalone Server 可在 https://www.seleniumhq.org/download/ 找到 下载链接是"Download version"右侧的版本号。
 + Chrome driver  https://sites.google.com/a/chromium.org/chromedriver/downloads 找到下载链接是 Latest Release:右侧的链接。并确保其可执行文件所在的文件夹的路径已经被加入环境变量的系统变量的PATH中，具体加入方法请自行搜索。
-+ 
 
 ## 下载
 
