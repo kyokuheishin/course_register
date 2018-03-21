@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>APU Course Register</title>
+    <style media="screen">
+        .version {
+            color: red;
+        }
+    </style>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
+    <link type="text/css" rel="stylesheet" href="node_modules/materialize-css/dist/css/materialize.min.css" media="screen,projection">
+
+</head>
+<body>
+
+
+
+<div class="row">
+    <form class="col s12">
+        <div class="row">
+            <div class="col s12">
+                <h3>Course Register</h3>
+            </div>
+        </div>
+        <div class="row">
+
+            <div class="input-field col s12">
+                <input placeholder="Username" id="username" type="text" >
+                <label for="username">Username</label>
+            </div>
+        </div>
+        <div class="row">
+            <div class="input-field col s12">
+                <input placeholder="Password" id="password" type="password" >
+                <label for="password">Password</label>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="input-field col s12">
+                <input placeholder="Number" id="dayOfTheWeek" type="number" >
+                <label for="dayOfTheWeek">Which day of the week?</label>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="input-field col s12">
+                <input placeholder="Number" id="period" type="number" >
+                <label for="period">Which period of the day?</label>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="input-field col s12">
+                <input placeholder="Number" id="quarter" type="number" >
+                <label for="quarter">Which quarter of the semester?</label>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="input-field col s12">
+                <input placeholder="Code" id="code" type="text" >
+                <label for="code">Code of the class</label>
+            </div>
+        </div>
+
+
+
+
+
+
+        <div class="row center-align">
+            <a class="waves-effect waves-light btn center-align" onclick="postUsernameAndPassword()">Login</a>
+        </div>
+
+
+    </form>
+
+</div>
+
+<script type="text/javascript" src="node_modules/jquery/dist/jquery.min.js"></script>
+<script type="text/javascript" src="node_modules/hammerjs/hammer.js"></script>
+<script type="text/javascript" src="node_modules/materialize-css/dist/js/materialize.min.js"></script>
+<script>
+
+
+
+    // import $ from "webdriverio/lib/commands/$";
+
+    // import {$} from "webdriverio";
+
+    function postUsernameAndPassword() {
+        var username = document.getElementById("username").value;
+        var password = document.getElementById("password").value;
+        var dayOfTheWeek = document.getElementById("dayOfTheWeek").value;
+        var period = document.getElementById("period").value;
+        var quarter = document.getElementById("quarter").value;
+        var code = document.getElementById("code").value;
+        getpage(username,password,dayOfTheWeek,period,quarter,code);
+    }
+
+    // const webdriver = require('selenium-webdriver');
+
+
+    // var driver = new webdriver.Builder()
+    //     .usingServer('http://localhost:9515')
+    //     .forBrowser('chrome')
+    //     .build();
+    // driver.get("https://cmate2.apu.ac.jp/campusapu/top.do");
+
+    function getpage(username,password,dayOfTheWeek,period,quarter,code) {
+
+        var webdriverio = require('webdriverio');
+
+        var options = { desiredCapabilities: { browserName: 'chrome' } };
+        var client = webdriverio.remote(options);
+
+        client
+            .init()
+            .url("https://cmate2.apu.ac.jp/campusapu/top.do")
+
+            .then(function () {
+                Materialize.toast("首页加载完成",4000);
+            })
+            .setValue('[name=userId]',username)
+            .setValue('[name=password]',password)
+            .click("#login")
+            .then(function () {
+                Materialize.toast("登录完成",4000);
+            })
+            .url("https://cmate2.apu.ac.jp/campusapu/wrsytblu.do?blockId=101&asdpgId=21&clearAccessData=true&targttbl=menuw&menuId=101")
+            .then(function () {
+                Materialize.toast("选课界面加载完成",4000);
+            })
+            .url("https://cmate2.apu.ac.jp/campusapu/wrsykgsu.do?blockId=102&asdpgId=21&yb="+dayOfTheWeek+"&jgn="+period+"&kkn="+quarter+"&key="+dayOfTheWeek+period+quarter+"&selectkgKey=")
+            .then(function () {
+                Materialize.toast("选择界面加载完成",4000);
+            })
+            .getAttribute("[value='"+code+"']","disabled").then(function () {
+
+            var checker = function (client,x) {
+                                console.log("Enter inside 2");
+                                client.getAttribute("[value='"+code+"']","disabled").then(function (attr) {
+                                    Materialize.toast("Start checking. The number of times is " +x,4000);
+                                    console.log("Start checking. The time(s) is " +x);
+                                    console.log("Enter inside 3");
+                                    console.log("The type of attr: "+typeof(attr));
+                                    console.log("The value of attr: "+attr);
+                                    console.log("Is attr equal to false? "+ (attr === "false"));
+                                    if (attr === "true"){
+
+                                        console.log("Enter inside 4");
+                                        client
+                                            .then(function () {
+                                                Materialize.toast("课程人满，返回到选课界面重新加载",4000);
+                                            })
+                                            .click("#tbluBack")
+                                            .url("https://cmate2.apu.ac.jp/campusapu/wrsykgsu.do?blockId=102&asdpgId=21&yb="+dayOfTheWeek+"&jgn="+period+"&kkn="+quarter+"&key="+dayOfTheWeek+period+quarter+"&selectkgKey=")
+                                            .then(function(){
+                                                x +=1;
+                                                console.log("Enter inside 6");
+                                                setTimeout(checker(client,x),0)});
+
+                                    }else {
+                                        console.log("Enter inside 5");
+                                        console.log("End checking after "+x+"tries");
+                                        client
+                                            .click("[value='"+code+"']")
+                                            .click("#kakunin")
+                                            .click("#confirm");
+
+
+                                    }
+
+                                });
+
+
+
+                        };
+
+            checker(client,0);
+
+
+        });
+
+
+
+
+        // .click("[value='"+code+"']")
+        //     .isSelected("[value='"+code+"']").then(function () {
+        //         console.log("Enter inside.");
+        //         var flag = false;
+        //
+        //         var radio = client.element("[value='"+code+"']");
+        //
+        //
+        //
+        //         // for (var i=0;i<Number.MAX_SAFE_INTEGER;i++){
+        //         //
+        //         //         console.log("Enter inside 2");
+        //         //         client.getAttribute("[value='"+code+"']","disabled").then(function (attr) {
+        //         //             console.log("Enter inside 3");
+        //         //             console.log(typeof(attr));
+        //         //             console.log(attr);
+        //         //             console.log(attr === "false");
+        //         //             if (attr === "true"){
+        //         //                 console.log("Enter inside 4");
+        //         //                 client
+        //         //                     .click("#tbluBack")
+        //         //                     .url("https://cmate2.apu.ac.jp/campusapu/wrsykgsu.do?blockId=102&asdpgId=21&yb="+dayOfTheWeek+"&jgn="+period+"&kkn="+quarter+"&key="+dayOfTheWeek+period+quarter+"&selectkgKey=");
+        //         //
+        //         //             }else {
+        //         //                 console.log("Enter inside 5");
+        //         //                 return false;
+        //         //
+        //         //             }
+        //         //
+        //         //         });
+        //         //
+        //         //
+        //         // }
+        //
+        //
+        //
+        //         var checker = function (client) {
+        //                 console.log("Enter inside 2");
+        //                 client.getAttribute("[value='"+code+"']","disabled").then(function (attr) {
+        //                     console.log("Enter inside 3");
+        //                     console.log(typeof(attr));
+        //                     console.log(attr);
+        //                     console.log(attr === "false");
+        //                     if (attr === "true"){
+        //                         console.log("Enter inside 4");
+        //                         client
+        //                             .click("#tbluBack")
+        //                             .url("https://cmate2.apu.ac.jp/campusapu/wrsykgsu.do?blockId=102&asdpgId=21&yb="+dayOfTheWeek+"&jgn="+period+"&kkn="+quarter+"&key="+dayOfTheWeek+period+quarter+"&selectkgKey=")
+        //                             .then(setTimeout(checker(client),0));
+        //
+        //                     }else {
+        //                         console.log("Enter inside 5");
+        //                         client
+        //                             .click("[value='"+code+"']")
+        //                             .click("#kakunin")
+        //                             .click("#confirm");
+        //
+        //
+        //                     }
+        //
+        //                 });
+        //
+        //
+        //
+        //         };
+        //
+        //     // var checker = function (client) {
+        //     //     console.log("Enter inside 2");
+        //     //     var attr = client.getAttribute("[value='"+code+"']","disabled");
+        //     //     console.log(typeof (attr));
+        //     //     if (attr === "true"){
+        //     //         console.log("Enter inside 4");
+        //     //         client
+        //     //             .click("#tbluBack")
+        //     //             .url("https://cmate2.apu.ac.jp/campusapu/wrsykgsu.do?blockId=102&asdpgId=21&yb="+dayOfTheWeek+"&jgn="+period+"&kkn="+quarter+"&key="+dayOfTheWeek+period+quarter+"&selectkgKey=")
+        //     //             .then(setTimeout(checker(client),0));
+        //     //     }
+        //     //     else {
+        //     //         console.log("Enter inside 5");
+        //     //         client
+        //     //             .click("[value='"+code+"']")
+        //     //             .click("#kakunin")
+        //     //             .click("#confirm");
+        //     //
+        //     //
+        //     //     }
+        //     //     // client.getAttribute("[value='"+code+"']","disabled").then(function (attr) {
+        //     //     //     console.log("Enter inside 3");
+        //     //     //     console.log(typeof(attr));
+        //     //     //     console.log(attr);
+        //     //     //     console.log(attr === "false");
+        //     //     //     if (attr === "true"){
+        //     //     //         console.log("Enter inside 4");
+        //     //     //         client
+        //     //     //             .click("#tbluBack")
+        //     //     //             .url("https://cmate2.apu.ac.jp/campusapu/wrsykgsu.do?blockId=102&asdpgId=21&yb="+dayOfTheWeek+"&jgn="+period+"&kkn="+quarter+"&key="+dayOfTheWeek+period+quarter+"&selectkgKey=")
+        //     //     //             .then(setTimeout(checker(client),0));
+        //     //     //
+        //     //     //     }else {
+        //     //     //         console.log("Enter inside 5");
+        //     //     //         client
+        //     //     //             .click("[value='"+code+"']")
+        //     //     //             .click("#kakunin")
+        //     //     //             .click("#confirm");
+        //     //     //
+        //     //     //
+        //     //     //     }
+        //     //     //
+        //     //     // });
+        //     //
+        //     //
+        //     //
+        //     // };
+        //
+        //         setTimeout(checker(client),0);
+        //
+        //         console.log(flag);
+        //
+        //     // client
+        //     //     .click("[value='"+code+"']")
+        //     //     .click("#kakunin")
+        //     //     .click("#confirm");
+        //
+        //     // for (;;){
+        //     //
+        //     //     if (client.isSelected("[value='"+code+"']")===false){
+        //     //         console.log("Enter inside2.");
+        //     //             client
+        //     //
+        //     //         break;
+        //     //     }else {
+        //     //         console.log("Enter inside3.");
+        //     //
+        //     //         break;
+        //     //     }
+        //     // }
+        // })
+
+
+
+
+        // for (;;){
+        //     client.click("[value='"+code+"']");
+        //     if (client.isSelected("[value='"+code+"']")){
+        //         break;
+        //     }else {
+        //         client
+        //             .click("#tbluBack")
+        //             .url("https://cmate2.apu.ac.jp/campusapu/wrsykgsu.do?blockId=102&asdpgId=21&yb="+dayOfTheWeek+"&jgn="+period+"&kkn="+quarter+"&key="+dayOfTheWeek+period+quarter+"&selectkgKey=");
+        //     }
+        // }
+        //
+        // client
+        //     .click("#kakunin")
+        //     // .click("td>input[value="+code+"]")
+        //     // .click("#kakunin")
+        //     .click("#confirm");
+
+        // driver.capabilities.timeouts("")
+        //
+        // // driver.wait(webdriver.until.elementLocated(webdriver.By.name("userId")),30000);
+        // // driver.wait(webdriver.until.is)
+        // // driver.wait(webdriver.until.elementLocated(webdriver.By.name("password")),30000);
+        // var username_input = driver.findElement(webdriver.By.name("userId"));
+        // username_input.sendKeys(username);
+        // var password_input = driver.findElement(webdriver.By.name("password"));
+        // password_input.sendKeys(password);
+        // var login_button = driver.findElement(webdriver.By.id("login"));
+        // login_button.click();
+        // driver.wait(webdriver.until.elementIsVisible(webdriver.By.className("linkMenuItem")),30000);
+        //
+        // // driver.wait(30000);
+        // driver.get("https://cmate2.apu.ac.jp/campusapu/wrsytblu.do?blockId=101&asdpgId=21&clearAccessData=true&targttbl=menuw&menuId=101")
+
+        // driver.wait(webdriver.until.titleIs('Campusmate'), 1000);
+        // driver.quit()
+    }
+</script>
+
+</body>
+</html>

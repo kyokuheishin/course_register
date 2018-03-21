@@ -1,0 +1,18 @@
+{
+  "name": "course_register",
+  "version": "1.0.0",
+  "description": "A course_register for APU (Ritsumeikan Asia Pacific University).",
+  "main": "main.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Kyokuheishin",
+  "license": "GPL-2.0",
+  "dependencies": {
+    "hammerjs": "^2.0.8",
+    "materialize-css": "^0.100.2",
+    "selenium-standalone": "^6.13.0",
+    "selenium-webdriver": "^4.0.0-alpha.1",
+    "webdriverio": "^4.12.0"
+  }
+}
